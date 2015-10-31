@@ -22,6 +22,7 @@ initializeWorkingDirAndScriptDir() {
 initializeWorkingDirAndScriptDir
 optaplannerGitCloneDir="$scriptDir/local/optaplannerGitClone"
 inputDir="$scriptDir/local/input"
+processedDir="$scriptDir/local/processed"
 outputDir="$scriptDir/local/output"
 
 
@@ -32,13 +33,13 @@ if [ ! -d "$optaplannerGitCloneDir" ]; then
   cd $scriptDir
 fi
 mkdir -p $inputDir
+mkdir -p $processedDir
 mkdir -p $outputDir
 
 cd $optaplannerGitCloneDir/optaplanner
 while [ true ] ; do
     echo "Heartbeat at timestamp (`date +%s`)."
     for inputFile in `ls $inputDir` ; do
-        timestamp=`date +%s`
         echo "Processing $inputFile"
         git pull --rebase
         if [ $? != 0 ] ; then
@@ -52,11 +53,16 @@ while [ true ] ; do
             sleep 300
             break
         fi
-        outputTimestampDir="$outputDir/$timestamp"
-        mkdir $outputTimestampDir
-        mv $inputDir/$inputFile $outputTimestampDir/.
+        mv $inputDir/$inputFile $processedDir/$inputFile
         echo
         echo "Benchmarking..."
+        cd optaplanner-examples
+        mvn exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath -Xms512m -Xmx2048m -server org.optaplanner.benchmark.impl.cli.OptaPlannerBenchmarkCli $processedDir/$inputFile $outputDir"
+        if [ $? != 0 ] ; then
+            echo "Benchmarking failed. Skipping inputfile ($inputFile)."
+            echo $? > $processedDir/failed_$inputFile
+        fi
+        cd ..
     done
     sleep 10
 done
