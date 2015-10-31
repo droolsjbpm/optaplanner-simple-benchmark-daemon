@@ -1,0 +1,25 @@
+== What is OptaPlanner Simple Benchmark Daemon?
+
+It's a simple and stupid benchmarking server, really.
+It's a shell script that automatically runs every benchmark config dropped in the input dir and put the results in the output dir.
+
+
+== How to use
+
+----
+$ ./run.sh &
+----
+
+Directory structure:
+
+* `local/input`: Upload your `*BenchmarkConfig.xml` (or `*BenchmarkConfig.xml.ftl`) here.
+* `local/ouput`: Download the benchmark reports here.
+
+== Developing Drools, OptaPlanner and jBPM
+
+*If you want to build or contribute to a droolsjbpm project, https://github.com/droolsjbpm/droolsjbpm-build-bootstrap/blob/master/README.md[read this document].*
+
+*It will save you and us a lot of time by setting up your development environment correctly.*
+It solves all known pitfalls that can disrupt your development.
+It also describes all guidelines, tips and tricks.
+If you want your pull requests (or patches) to be merged into master, please respect those guidelines.
