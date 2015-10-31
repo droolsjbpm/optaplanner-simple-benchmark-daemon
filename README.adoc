@@ -1,7 +1,7 @@
 == What is OptaPlanner Simple Benchmark Daemon?
 
 It's a simple and stupid benchmarking server, really.
-It's a shell script that automatically runs every benchmark config dropped in the input dir and put the results in the output dir.
+It's a shell script that automatically runs every benchmark config dropped in the input dir and puts the results in the output dir.
 
 
 == How to use
