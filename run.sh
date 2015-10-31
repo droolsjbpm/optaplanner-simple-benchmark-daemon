@@ -32,12 +32,31 @@ if [ ! -d "$optaplannerGitCloneDir" ]; then
   cd $scriptDir
 fi
 mkdir -p $inputDir
-fi
 mkdir -p $outputDir
 
-
+cd $optaplannerGitCloneDir/optaplanner
 while [ true ] ; do
-    timestamp=`date +%s`
-    echo "hello $timestamp"
-    sleep 1000
+    echo "Heartbeat at timestamp (`date +%s`)."
+    for inputFile in `ls $inputDir` ; do
+        timestamp=`date +%s`
+        echo "Processing $inputFile"
+        git pull --rebase
+        if [ $? != 0 ] ; then
+            echo "Git pull failed. Sleeping 5 minutes."
+            sleep 300
+            break
+        fi
+        mvn clean install -DskipTests
+        if [ $? != 0 ] ; then
+            echo "Maven failed. Sleeping 5 minutes."
+            sleep 300
+            break
+        fi
+        outputTimestampDir="$outputDir/$timestamp"
+        mkdir $outputTimestampDir
+        mv $inputDir/$inputFile $outputTimestampDir/.
+        echo
+        echo "Benchmarking..."
+    done
+    sleep 10
 done
