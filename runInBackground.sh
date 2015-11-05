@@ -6,7 +6,7 @@ if [ -z "$SSH_AUTH_SOCK" ] ; then
   eval `ssh-agent -s`
   ssh-add
 fi
-if [ `ps aux | grep "run.sh" | grep -v "grep" | wc -l` ]; then
+if [ `ps aux | grep "run.sh" | grep -v "grep" | wc -l` -gt 0 ]; then
   echo
   echo "ERROR: There is already a process called run.sh running. Kill it first."
   echo
