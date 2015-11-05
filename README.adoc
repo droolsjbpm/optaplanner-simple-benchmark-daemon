@@ -6,11 +6,13 @@ It's a shell script that automatically runs every benchmark config dropped in th
 
 == How to use
 
+Just do this.
+
 ----
-$ exec ssh-agent bash
-$ ssh-add
-$ ./run.sh &
+$ ./runInBackground.sh
 ----
+
+If that doesn't work, then run `./run.sh` instead to output information to the console.
 
 Directory structure:
 
