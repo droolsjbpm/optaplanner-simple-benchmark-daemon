@@ -1,4 +1,5 @@
 #!/bin/bash
+# It uses /bin/bash and not /bin/sh because aliasses are often definied in ~/.bashrc
 
 # Daemon that automatically runs every benchmark config files that is dropped into the local/input
 
@@ -13,4 +14,4 @@ if [ `ps aux | grep "run.sh" | grep -v "grep" | wc -l` -gt 0 ]; then
   ps aux | grep "run.sh" | grep -v "grep"
   exit 1
 fi
-(./run.sh &) > /dev/null 2> local/errorLog.txt
+nohup ./run.sh > /dev/null 2> local/errorLog.txt < /dev/null &

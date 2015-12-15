@@ -1,4 +1,5 @@
 #!/bin/bash
+# It uses /bin/bash and not /bin/sh because aliasses are often definied in ~/.bashrc
 
 # Daemon that automatically runs every benchmark config files that is dropped into the local/input
 
