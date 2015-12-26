@@ -25,10 +25,9 @@ gitCloneDir="$scriptDir/local/gitClone"
 inputDir="$scriptDir/local/input"
 processedDir="$scriptDir/local/processed"
 outputDir="$scriptDir/local/output"
+. ./default.local.properties
 if [ -f local.properties ]; then
   . ./local.properties
-else
-  . ./default.local.properties
 fi
 
 if [ ! -d "$gitCloneDir" ]; then
@@ -52,7 +51,7 @@ while [ true ] ; do
             sleep 300
             break
         fi
-        mvn -U clean install -DskipTests
+        $M3_HOME/mvn $MAVEN_OPTS -U clean install -DskipTests
         if [ $? != 0 ] ; then
             echo "Maven failed. Sleeping 5 minutes."
             sleep 300
@@ -62,7 +61,7 @@ while [ true ] ; do
         echo
         echo "Benchmarking..."
         cd $modulePath
-        mvn exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath $vmOptions org.optaplanner.benchmark.impl.cli.OptaPlannerBenchmarkCli $processedDir/$inputFile $outputDir"
+        $M3_HOME/mvn $MAVEN_OPTS exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath $VM_OPTS org.optaplanner.benchmark.impl.cli.OptaPlannerBenchmarkCli $processedDir/$inputFile $outputDir"
         if [ $? != 0 ] ; then
             echo "Benchmarking failed. Skipping inputfile ($inputFile)."
             echo $? > $processedDir/failed_$inputFile
