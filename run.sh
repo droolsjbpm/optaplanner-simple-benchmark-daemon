@@ -1,5 +1,4 @@
-#!/bin/bash
-# It uses /bin/bash and not /bin/sh because aliasses are often definied in ~/.bashrc
+#!/bin/sh
 
 # Daemon that automatically runs every benchmark config files that is dropped into the local/input
 
@@ -21,23 +20,28 @@ initializeWorkingDirAndScriptDir() {
     scriptDir=`pwd -P`
 }
 initializeWorkingDirAndScriptDir
-optaplannerGitCloneDir="$scriptDir/local/optaplannerGitClone"
+
+gitCloneDir="$scriptDir/local/gitClone"
 inputDir="$scriptDir/local/input"
 processedDir="$scriptDir/local/processed"
 outputDir="$scriptDir/local/output"
+if [ -f local.properties ]; then
+  . ./local.properties
+else
+  . ./default.local.properties
+fi
 
-
-if [ ! -d "$optaplannerGitCloneDir" ]; then
-  mkdir -p $optaplannerGitCloneDir
-  cd $optaplannerGitCloneDir
-  git clone git@github.com:droolsjbpm/optaplanner.git
+if [ ! -d "$gitCloneDir" ]; then
+  mkdir -p $gitCloneDir
+  cd $gitCloneDir
+  git clone $gitCloneUrl
   cd $scriptDir
 fi
 mkdir -p $inputDir
 mkdir -p $processedDir
 mkdir -p $outputDir
 
-cd $optaplannerGitCloneDir/optaplanner
+cd $gitCloneDir/$projectDir
 while [ true ] ; do
     echo "Heartbeat at timestamp (`date +%s`)."
     for inputFile in `ls $inputDir` ; do
@@ -48,7 +52,7 @@ while [ true ] ; do
             sleep 300
             break
         fi
-        mvn clean install -DskipTests
+        mvn -U clean install -DskipTests
         if [ $? != 0 ] ; then
             echo "Maven failed. Sleeping 5 minutes."
             sleep 300
@@ -57,8 +61,8 @@ while [ true ] ; do
         mv $inputDir/$inputFile $processedDir/$inputFile
         echo
         echo "Benchmarking..."
-        cd optaplanner-examples
-        mvn exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath -Xms512m -Xmx2048m -server org.optaplanner.benchmark.impl.cli.OptaPlannerBenchmarkCli $processedDir/$inputFile $outputDir"
+        cd $modulePath
+        mvn exec:exec -Dexec.executable="java" -Dexec.args="-cp %classpath $vmOptions org.optaplanner.benchmark.impl.cli.OptaPlannerBenchmarkCli $processedDir/$inputFile $outputDir"
         if [ $? != 0 ] ; then
             echo "Benchmarking failed. Skipping inputfile ($inputFile)."
             echo $? > $processedDir/failed_$inputFile
