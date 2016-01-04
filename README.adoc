@@ -1,23 +1,39 @@
 == What is OptaPlanner Simple Benchmark Daemon?
 
-It's a simple and stupid benchmarking server, really.
-It's a shell script that automatically runs every benchmark config dropped in the input dir and puts the results in the output dir.
+This is a simple and stupid benchmarking server that runs every benchmark config dropped into a directory.
 
+It's implemented through a shell script that automatically runs every benchmark config dropped in the input dir and puts the results in the output dir.
 
-== How to use
+== Usage
 
-Just do this.
+To start the server, run this command:
 
 ----
 $ ./runInBackground.sh
 ----
 
-If that doesn't work, then run `./run.sh` instead to output information to the console.
+Then drop your benchmark config in `local/input`
+and wait until the results appear in `local/output`.
 
-Directory structure:
+== Configuration
+
+By default, you can only use OptaPlanner Examples in your benchmark config.
+To use your own use case (by simply using the classpath of your own project instead of that of OptaPlanner Examples),
+do this:
+
+----
+$ cp default.local.properties local.properties
+$ gedit local.properties
+----
+
+== Directory structure
 
 * `local/input`: Upload your `*BenchmarkConfig.xml` (or `*BenchmarkConfig.xml.ftl`) here.
 * `local/ouput`: Download the benchmark reports here.
+
+== Troubleshooting
+
+If the `runInBackground.sh` command doesn't work, then run `./run.sh` instead to output information to the console.
 
 == Developing Drools, OptaPlanner and jBPM
 
